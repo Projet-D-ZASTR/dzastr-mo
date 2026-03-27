@@ -48,10 +48,10 @@ class ServiceUpdate(BaseModel):
 
 
 class ServiceResponse(BaseModel):
-    id: int
-    nom: str
-    prix_heure: Decimal
-    description: str | None
+    service_id: int
+    service_nom: str
+    service_prixHeure: Decimal
+    service_description: str | None
 
     model_config = {"from_attributes": True}
 
@@ -71,7 +71,7 @@ def obtenir_service(service_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ServiceResponse, status_code=status.HTTP_201_CREATED)
 def creer_service(data: ServiceCreate, db: Session = Depends(get_db)):
-    service = Service(nom=data.nom, prix_heure=data.prix_heure)
+    service = Service(service_nom=data.nom, service_prixHeure=data.prix_heure)
     db.add(service)
     db.commit()
     db.refresh(service)
@@ -84,9 +84,9 @@ def modifier_service(service_id: int, data: ServiceUpdate, db: Session = Depends
     if not service:
         raise HTTPException(status_code=404, detail="Service introuvable")
     if data.nom is not None:
-        service.nom = data.nom
+        service.service_nom = data.nom
     if data.prix_heure is not None:
-        service.prix_heure = data.prix_heure
+        service.service_prixHeure = data.prix_heure
     db.commit()
     db.refresh(service)
     return service
