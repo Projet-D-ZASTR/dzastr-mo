@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 # Load .env file
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DB_URL")
 if DATABASE_URL is None:
-    raise ValueError("DATABASE_URL is not set in .env")
+    raise ValueError("DATABASE_URL/DB_URL is not set in environment")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
