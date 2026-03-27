@@ -11,4 +11,4 @@ class Service(Base):
     service_description = Column(Text, nullable=True)
 
     def __repr__(self):
-        return f"<Service(id={self.id}, nom='{self.nom}', prix_heure={self.prix_heure})>"
+        return f"<Service(id={self.service_id}, nom='{self.service_nom}', prix_heure={self.service_prixHeure})>"
