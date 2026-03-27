@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from pydantic import BaseModel, field_validator
-from src.models.client import Client
+from sqlalchemy.orm import Session
+
 from config import get_db
+from src.models.client import Client
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
@@ -106,7 +107,7 @@ def creer_client(data: ClientCreate, db: Session = Depends(get_db)):
         name=data.name,
         entreprise=data.entreprise,
         email=data.email,
-        adresse=data.adresse
+        adresse=data.adresse,
     )
     db.add(client)
     db.commit()
@@ -133,11 +134,13 @@ def modifier_client(client_id: int, data: ClientUpdate, db: Session = Depends(ge
 
 
 @router.delete("/{client_id}", status_code=status.HTTP_204_NO_CONTENT)
-def supprimer_client(client_id: int, confirme: bool = False, db: Session = Depends(get_db)):
+def supprimer_client(
+    client_id: int, confirme: bool = False, db: Session = Depends(get_db)
+):
     if not confirme:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Add ?confirme=true to delete"
+            detail="Add ?confirme=true to delete",
         )
     client = db.get(Client, client_id)
     if not client:

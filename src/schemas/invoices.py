@@ -1,10 +1,10 @@
-import enum
 from datetime import date
-from typing import List, Optional
+from enum import StrEnum
+
 from pydantic import BaseModel, model_validator
 
 
-class InvoiceState(str, enum.Enum):
+class InvoiceState(StrEnum):
     draft = "draft"
     sent = "sent"
     paid = "paid"
@@ -16,14 +16,14 @@ class InvoiceCreate(BaseModel):
     client_id: int
     invoice_price: float
     invoice_date: date
-    item_ids: List[int]
+    item_ids: list[int]
 
 
 class InvoiceUpdate(BaseModel):
-    invoice_price: Optional[float] = None
-    invoice_date: Optional[date] = None
-    invoice_state: Optional[InvoiceState] = None
-    item_ids: Optional[List[int]] = None
+    invoice_price: float | None = None
+    invoice_date: date | None = None
+    invoice_state: InvoiceState | None = None
+    item_ids: list[int] | None = None
 
 
 class InvoiceRead(BaseModel):
@@ -33,7 +33,7 @@ class InvoiceRead(BaseModel):
     invoice_price: float
     invoice_date: date
     invoice_state: InvoiceState
-    item_ids: List[int]
+    item_ids: list[int]
 
     model_config = {"from_attributes": True}
 
