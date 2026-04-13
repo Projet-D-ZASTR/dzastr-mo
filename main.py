@@ -1,16 +1,20 @@
 from dotenv import load_dotenv
+
 load_dotenv()
 
-from fastapi import FastAPI
-from src.models.base import Base
-from src.models import Invoice, InvoiceItem  # noqa: F401 — needed for metadata
-from src.route.invoices_route import router as invoices_router
-from config import engine
-from src.route import serviceFacture, services, client
+from fastapi import Depends, FastAPI  # noqa: E402
+
+from config import engine  # noqa: E402
+from src.middlewares.accessToken import verify_user  # noqa: E402
+from src.middlewares.servicetoken import verify_service_token  # noqa: E402
+from src.models import Invoice, InvoiceItem  # noqa: E402, F401 — needed for metadata
+from src.models.base import Base  # noqa: E402
+from src.route import client, serviceFacture, services  # noqa: E402
+from src.route.invoices_route import router as invoices_router  # noqa: E402
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(verify_service_token), Depends(verify_user)])
 
 app.include_router(invoices_router)
 app.include_router(services.router)

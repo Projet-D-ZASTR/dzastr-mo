@@ -1,10 +1,13 @@
-import enum
-from sqlalchemy import Column, Integer, Numeric, Date, ForeignKey, Enum as SAEnum
+from enum import StrEnum
+
+from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import relationship
+
 from .base import Base
 
 
-class InvoiceState(str, enum.Enum):
+class InvoiceState(StrEnum):
     draft = "draft"
     sent = "sent"
     paid = "paid"
@@ -19,9 +22,13 @@ class Invoice(Base):
     client_id = Column(Integer, nullable=False)
     invoice_price = Column(Numeric(10, 2), nullable=False, default=0.00)
     invoice_date = Column(Date, nullable=False)
-    invoice_state = Column(SAEnum(InvoiceState), nullable=False, default=InvoiceState.draft)
+    invoice_state = Column(
+        SAEnum(InvoiceState), nullable=False, default=InvoiceState.draft
+    )
 
-    items = relationship("InvoiceItem", back_populates="invoice", cascade="all, delete-orphan")
+    items = relationship(
+        "InvoiceItem", back_populates="invoice", cascade="all, delete-orphan"
+    )
 
 
 class InvoiceItem(Base):
