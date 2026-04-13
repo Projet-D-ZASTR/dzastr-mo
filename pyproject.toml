@@ -17,6 +17,7 @@ ignore = [
     "E501", # line too long (géré par le formatter)
 ]
 
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
