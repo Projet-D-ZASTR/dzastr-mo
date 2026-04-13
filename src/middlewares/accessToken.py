@@ -1,17 +1,22 @@
 from os import getenv
 
-from fastapi import Header, HTTPException, Depends
+from fastapi import HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import httpx
 
 AUTH_SERVICE_URL = getenv("AUTH_SERVICE_URL", "http://localhost:8001/validate-token")
-SERVICE_TOKEN = getenv("AUTH_SERVICE_TOKEN")
+AUTH_SERVICE_TOKEN = getenv("AUTH_SERVICE_TOKEN")
 
+if AUTH_SERVICE_TOKEN is None:
+    raise RuntimeError("AUTH_SERVICE_TOKEN must be set in .env for access token verification to work")
+if AUTH_SERVICE_URL is None:
+    raise RuntimeError("AUTH_SERVICE_URL must be set in .env for access token verification to work")
 
 async def verify_user(
-    authorization: str = Header(...),
+    credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
 ):
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid Authorization header")
+    token = credentials.credentials 
+    authorization = f"Bearer {token}"
 
     async with httpx.AsyncClient() as client:
         try:
@@ -19,8 +24,8 @@ async def verify_user(
                 AUTH_SERVICE_URL,
                 headers={
                     "Authorization": authorization,
-                    "x-service-token": SERVICE_TOKEN,
-                },
+                    "x-service-token": AUTH_SERVICE_TOKEN,
+                }, 
                 timeout=5.0,
             )
         except httpx.RequestError:
@@ -34,4 +39,4 @@ async def verify_user(
     if not data.get("valid"):
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    return data["user"]  # 👈 useful for downstream routes
+    return data["user"]
