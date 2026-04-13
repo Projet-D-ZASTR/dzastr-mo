@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from pydantic import BaseModel, field_validator
 from decimal import Decimal
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, field_validator
+from sqlalchemy.orm import Session
 
 from config import get_db
 from src.models.services import Service
@@ -79,7 +80,9 @@ def creer_service(data: ServiceCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{service_id}", response_model=ServiceResponse)
-def modifier_service(service_id: int, data: ServiceUpdate, db: Session = Depends(get_db)):
+def modifier_service(
+    service_id: int, data: ServiceUpdate, db: Session = Depends(get_db)
+):
     service = db.get(Service, service_id)
     if not service:
         raise HTTPException(status_code=404, detail="Service introuvable")
@@ -93,11 +96,13 @@ def modifier_service(service_id: int, data: ServiceUpdate, db: Session = Depends
 
 
 @router.delete("/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
-def supprimer_service(service_id: int, confirme: bool = False, db: Session = Depends(get_db)):
+def supprimer_service(
+    service_id: int, confirme: bool = False, db: Session = Depends(get_db)
+):
     if not confirme:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Ajoutez ?confirme=true pour confirmer la suppression"
+            detail="Ajoutez ?confirme=true pour confirmer la suppression",
         )
     service = db.get(Service, service_id)
     if not service:

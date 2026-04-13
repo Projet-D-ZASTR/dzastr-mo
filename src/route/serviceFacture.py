@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from pydantic import BaseModel, field_validator
-from decimal import Decimal
+from sqlalchemy.orm import Session
 
 from config import get_db
 from src.models.serviceFacture import ServiceFacture
@@ -61,7 +60,7 @@ def creer_serviceFacture(data: ServiceFactureCreate, db: Session = Depends(get_d
     service = ServiceFacture(
         ServiceFacture_Id=data.ServiceFacture_Id,
         Service_Id=data.Service_Id,
-        ServiceFacture_Lot=data.ServiceFacture_Lot
+        ServiceFacture_Lot=data.ServiceFacture_Lot,
     )
     db.add(service)
     db.commit()
@@ -74,10 +73,10 @@ def supprimer_serviceFacture(serviceFacture_Id: int, confirme: bool = False, db:
     if not confirme:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Ajoutez ?confirme=true pour confirmer la suppression"
+            detail="Ajoutez ?confirme=true pour confirmer la suppression",
         )
-    ServiceFacture = db.get(ServiceFacture, serviceFacture_Id)
-    if not ServiceFacture:
+    sf = db.get(ServiceFacture, serviceFacture_Id)
+    if not sf:
         raise HTTPException(status_code=404, detail="Service introuvable")
-    db.delete(ServiceFacture)
+    db.delete(sf)
     db.commit()

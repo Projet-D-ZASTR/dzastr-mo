@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from pydantic import BaseModel, field_validator
-from src.models.client import Client
+from sqlalchemy.orm import Session
+
 from config import get_db
+from src.models.client import Client
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
@@ -78,11 +79,11 @@ class ClientUpdate(BaseModel):
 
 
 class ClientResponse(BaseModel):
-    id: int
-    name: str
-    entreprise: str
-    email: str
-    adresse: str
+    ClientId: int
+    Client_Name: str
+    Client_Entreprise: str
+    Client_Email: str
+    Client_Address: str
 
     model_config = {"from_attributes": True}
 
@@ -103,10 +104,10 @@ def obtenir_client(client_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
 def creer_client(data: ClientCreate, db: Session = Depends(get_db)):
     client = Client(
-        name=data.name,
-        entreprise=data.entreprise,
-        email=data.email,
-        adresse=data.adresse
+        Client_Name=data.name,
+        Client_Entreprise=data.entreprise,
+        Client_Email=data.email,
+        Client_Address=data.adresse,
     )
     db.add(client)
     db.commit()
@@ -120,24 +121,26 @@ def modifier_client(client_id: int, data: ClientUpdate, db: Session = Depends(ge
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
     if data.name is not None:
-        client.name = data.name
+        client.Client_Name = data.name
     if data.entreprise is not None:
-        client.entreprise = data.entreprise
+        client.Client_Entreprise = data.entreprise
     if data.email is not None:
-        client.email = data.email
+        client.Client_Email = data.email
     if data.adresse is not None:
-        client.adresse = data.adresse
+        client.Client_Address = data.adresse
     db.commit()
     db.refresh(client)
     return client
 
 
 @router.delete("/{client_id}", status_code=status.HTTP_204_NO_CONTENT)
-def supprimer_client(client_id: int, confirme: bool = False, db: Session = Depends(get_db)):
+def supprimer_client(
+    client_id: int, confirme: bool = False, db: Session = Depends(get_db)
+):
     if not confirme:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Add ?confirme=true to delete"
+            detail="Add ?confirme=true to delete",
         )
     client = db.get(Client, client_id)
     if not client:
