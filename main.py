@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from fastapi import Depends, FastAPI  # noqa: E402
 
