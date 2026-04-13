@@ -8,9 +8,13 @@ AUTH_SERVICE_URL = getenv("AUTH_SERVICE_URL", "http://localhost:8001/validate-to
 AUTH_SERVICE_TOKEN = getenv("AUTH_SERVICE_TOKEN")
 
 if AUTH_SERVICE_TOKEN is None:
-    raise RuntimeError("AUTH_SERVICE_TOKEN must be set in .env for access token verification to work")
+    raise RuntimeError(
+        "AUTH_SERVICE_TOKEN must be set in .env for access token verification to work"
+    )
 if AUTH_SERVICE_URL is None:
-    raise RuntimeError("AUTH_SERVICE_URL must be set in .env for access token verification to work")
+    raise RuntimeError(
+        "AUTH_SERVICE_URL must be set in .env for access token verification to work"
+    )
 
 
 async def verify_user(

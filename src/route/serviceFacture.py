@@ -55,7 +55,9 @@ def obtenir_serviceFacture(service_Id: int, db: Session = Depends(get_db)):
     return service
 
 
-@router.post("/", response_model=ServiceFactureResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=ServiceFactureResponse, status_code=status.HTTP_201_CREATED
+)
 def creer_serviceFacture(data: ServiceFactureCreate, db: Session = Depends(get_db)):
     service = ServiceFacture(
         ServiceFacture_Id=data.ServiceFacture_Id,
@@ -69,7 +71,9 @@ def creer_serviceFacture(data: ServiceFactureCreate, db: Session = Depends(get_d
 
 
 @router.delete("/{serviceFacture_Id}", status_code=status.HTTP_204_NO_CONTENT)
-def supprimer_serviceFacture(serviceFacture_Id: int, confirme: bool = False, db: Session = Depends(get_db)):
+def supprimer_serviceFacture(
+    serviceFacture_Id: int, confirme: bool = False, db: Session = Depends(get_db)
+):
     if not confirme:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

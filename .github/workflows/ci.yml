@@ -41,3 +41,7 @@ jobs:
 
       - name: Run tests
         run: pytest test/
+        env:
+          DATABASE_URL: sqlite:///:memory:
+          AUTH_SERVICE_TOKEN: ci-test-token
+          SERVICE_TOKEN: ci-test-token
