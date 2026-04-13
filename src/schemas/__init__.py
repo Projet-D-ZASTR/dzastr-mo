@@ -1,3 +1,3 @@
-from .invoices import InvoiceCreate, InvoiceUpdate, InvoiceRead
+from .invoices import InvoiceCreate, InvoiceRead, InvoiceUpdate
 
 __all__ = ["InvoiceCreate", "InvoiceUpdate", "InvoiceRead"]

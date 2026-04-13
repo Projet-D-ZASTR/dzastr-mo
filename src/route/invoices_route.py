@@ -1,10 +1,9 @@
-from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from config import get_db
 from src.models.invoices import Invoice, InvoiceItem
-from src.schemas.invoices import InvoiceCreate, InvoiceUpdate, InvoiceRead
+from src.schemas.invoices import InvoiceCreate, InvoiceRead, InvoiceUpdate
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
 
@@ -28,8 +27,8 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db)):
     return invoice
 
 
-@router.get("/", response_model=List[InvoiceRead])
-def list_invoices(user_id: Optional[int] = None, db: Session = Depends(get_db)):
+@router.get("/", response_model=list[InvoiceRead])
+def list_invoices(user_id: int | None = None, db: Session = Depends(get_db)):
     query = db.query(Invoice)
     if user_id is not None:
         query = query.filter(Invoice.user_id == user_id)
@@ -40,15 +39,21 @@ def list_invoices(user_id: Optional[int] = None, db: Session = Depends(get_db)):
 def get_invoice(invoice_id: int, db: Session = Depends(get_db)):
     invoice = db.query(Invoice).filter(Invoice.invoice_id == invoice_id).first()
     if not invoice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found"
+        )
     return invoice
 
 
 @router.put("/{invoice_id}", response_model=InvoiceRead)
-def update_invoice(invoice_id: int, payload: InvoiceUpdate, db: Session = Depends(get_db)):
+def update_invoice(
+    invoice_id: int, payload: InvoiceUpdate, db: Session = Depends(get_db)
+):
     invoice = db.query(Invoice).filter(Invoice.invoice_id == invoice_id).first()
     if not invoice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found"
+        )
 
     if payload.invoice_price is not None:
         invoice.invoice_price = payload.invoice_price
@@ -73,6 +78,8 @@ def update_invoice(invoice_id: int, payload: InvoiceUpdate, db: Session = Depend
 def delete_invoice(invoice_id: int, db: Session = Depends(get_db)):
     invoice = db.query(Invoice).filter(Invoice.invoice_id == invoice_id).first()
     if not invoice:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found"
+        )
     db.delete(invoice)
     db.commit()

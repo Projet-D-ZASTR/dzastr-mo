@@ -1,21 +1,26 @@
 from os import getenv
 
-from fastapi import HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import httpx
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 AUTH_SERVICE_URL = getenv("AUTH_SERVICE_URL", "http://localhost:8001/validate-token")
 AUTH_SERVICE_TOKEN = getenv("AUTH_SERVICE_TOKEN")
 
 if AUTH_SERVICE_TOKEN is None:
-    raise RuntimeError("AUTH_SERVICE_TOKEN must be set in .env for access token verification to work")
+    raise RuntimeError(
+        "AUTH_SERVICE_TOKEN must be set in .env for access token verification to work"
+    )
 if AUTH_SERVICE_URL is None:
-    raise RuntimeError("AUTH_SERVICE_URL must be set in .env for access token verification to work")
+    raise RuntimeError(
+        "AUTH_SERVICE_URL must be set in .env for access token verification to work"
+    )
+
 
 async def verify_user(
     credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
 ):
-    token = credentials.credentials 
+    token = credentials.credentials
     authorization = f"Bearer {token}"
 
     async with httpx.AsyncClient() as client:
@@ -25,7 +30,7 @@ async def verify_user(
                 headers={
                     "Authorization": authorization,
                     "x-service-token": AUTH_SERVICE_TOKEN,
-                }, 
+                },
                 timeout=5.0,
             )
         except httpx.RequestError:
