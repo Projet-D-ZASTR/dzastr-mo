@@ -21,7 +21,7 @@ async def verify_user(
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(
-                AUTH_SERVICE_URL,
+                AUTH_SERVICE_URL + "/api/secure/verify",
                 headers={
                     "Authorization": authorization,
                     "x-service-token": AUTH_SERVICE_TOKEN,
