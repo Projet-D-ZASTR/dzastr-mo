@@ -1,5 +1,3 @@
-from contextlib import asynccontextmanager
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,26 +9,14 @@ from src.middlewares.accessToken import verify_user  # noqa: E402
 from src.middlewares.servicetoken import verify_service_token  # noqa: E402
 from src.models import Invoice, InvoiceItem  # noqa: E402, F401 — needed for metadata
 from src.models.base import Base  # noqa: E402
-from src.models.user_client import UserClient  # noqa: E402, F401 — needed for metadata
 from src.route import client, serviceFacture, services  # noqa: E402
 from src.route.invoices_route import router as invoices_router  # noqa: E402
-from src.route.user_client import router as user_client_router  # noqa: E402
 
+Base.metadata.create_all(bind=engine)
 
-@asynccontextmanager
-async def lifespan(_app: FastAPI):
-    if engine.url.drivername != "sqlite":
-        Base.metadata.create_all(bind=engine)
-    yield
-
-
-app = FastAPI(
-    lifespan=lifespan,
-    dependencies=[Depends(verify_service_token), Depends(verify_user)],
-)
+app = FastAPI(dependencies=[Depends(verify_service_token), Depends(verify_user)])
 
 app.include_router(invoices_router)
 app.include_router(services.router)
 app.include_router(client.router)
 app.include_router(serviceFacture.router)
-app.include_router(user_client_router)
