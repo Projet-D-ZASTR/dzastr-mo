@@ -6,8 +6,8 @@ from sqlalchemy.orm import sessionmaker
 
 # Hors conteneur Docker: priorise .env.local, sinon fallback .env.
 if not os.path.exists("/.dockerenv"):
-    if not load_dotenv(".env.local"):
-        load_dotenv(".env")
+    if not load_dotenv(".env.local", override=True):
+        load_dotenv(".env", override=True)
 
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DB_URL")
 if DATABASE_URL is None:

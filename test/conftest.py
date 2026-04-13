@@ -5,33 +5,20 @@ from fastapi.testclient import TestClient
 
 os.environ.setdefault("AUTH_SERVICE_TOKEN", "test-token")
 os.environ.setdefault("SERVICE_TOKEN", "test-token")
-os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
-from sqlalchemy import Column, Integer, String, create_engine  # noqa: E402
-from sqlalchemy.orm import sessionmaker  # noqa: E402
-from sqlalchemy.pool import StaticPool  # noqa: E402
-
-from config import get_db  # noqa: E402
-from main import app  # noqa: E402
-from src.middlewares.accessToken import verify_user  # noqa: E402
-from src.middlewares.servicetoken import verify_service_token  # noqa: E402
-from src.models.base import Base  # noqa: E402
+from config import get_db
+from main import app
+from src.middlewares.accessToken import verify_user
+from src.middlewares.servicetoken import verify_service_token
+from src.models.base import Base
 from src.models.client import (
-    Client,  # noqa: E402, F401 — enregistre la table dans Base.metadata
+    Client,  # noqa: F401 — enregistre la table dans Base.metadata
 )
-from src.models.invoices import Invoice, InvoiceItem  # noqa: E402, F401
-from src.models.services import Service  # noqa: E402, F401
-from src.models.user_client import UserClient  # noqa: E402, F401
-
-
-# Stub de la table users (appartient à dzastr-auth) — nécessaire pour résoudre la FK User_Id
-class UserStub(Base):
-    __tablename__ = "users"
-
-    User_Id = Column(Integer, primary_key=True, autoincrement=True)
-    User_Username = Column(String(80), nullable=False)
-    User_Email = Column(String(80), nullable=False)
-
+from src.models.invoices import Invoice, InvoiceItem  # noqa: F401
+from src.models.services import Service  # noqa: F401
 
 engine = create_engine(
     "sqlite:///:memory:",
