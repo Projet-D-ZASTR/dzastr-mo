@@ -2,9 +2,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI  # noqa: E402
 
-from config import engine
+from config import engine  # noqa: E402
 from src.middlewares.accessToken import verify_user  # noqa: E402
 from src.middlewares.servicetoken import verify_service_token  # noqa: E402
 from src.models import Invoice, InvoiceItem  # noqa: E402, F401 — needed for metadata
