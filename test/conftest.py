@@ -7,7 +7,9 @@ from sqlalchemy.pool import StaticPool
 from config import get_db
 from main import app
 from src.models.base import Base
-from src.models.client import Client  # noqa: F401 — enregistre la table dans Base.metadata
+from src.models.client import (
+    Client,  # noqa: F401 — enregistre la table dans Base.metadata
+)
 from src.models.invoices import Invoice, InvoiceItem  # noqa: F401
 from src.models.services import Service  # noqa: F401
 
