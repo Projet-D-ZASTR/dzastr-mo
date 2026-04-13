@@ -8,6 +8,7 @@ def test_creer_client(client):
     res = client.post(
         "/clients/",
         json={
+            "user_id": 1,
             "name": "Alice Dupont",
             "entreprise": "Acme",
             "email": "alice@acme.com",
@@ -26,6 +27,7 @@ def test_creer_client_nom_vide(client):
     res = client.post(
         "/clients/",
         json={
+            "user_id": 1,
             "name": "  ",
             "entreprise": "Acme",
             "email": "alice@acme.com",
@@ -39,6 +41,7 @@ def test_creer_client_email_vide(client):
     res = client.post(
         "/clients/",
         json={
+            "user_id": 1,
             "name": "Alice",
             "entreprise": "Acme",
             "email": "  ",
@@ -52,6 +55,7 @@ def test_obtenir_client(client):
     client.post(
         "/clients/",
         json={
+            "user_id": 1,
             "name": "Alice Dupont",
             "entreprise": "Acme",
             "email": "alice@acme.com",
@@ -72,6 +76,7 @@ def test_modifier_client(client):
     client.post(
         "/clients/",
         json={
+            "user_id": 1,
             "name": "Alice Dupont",
             "entreprise": "Acme",
             "email": "alice@acme.com",
@@ -92,6 +97,7 @@ def test_supprimer_client_sans_confirmation(client):
     client.post(
         "/clients/",
         json={
+            "user_id": 1,
             "name": "Alice Dupont",
             "entreprise": "Acme",
             "email": "alice@acme.com",
@@ -106,6 +112,7 @@ def test_supprimer_client(client):
     client.post(
         "/clients/",
         json={
+            "user_id": 1,
             "name": "Alice Dupont",
             "entreprise": "Acme",
             "email": "alice@acme.com",

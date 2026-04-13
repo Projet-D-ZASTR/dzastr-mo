@@ -9,6 +9,7 @@ router = APIRouter(prefix="/clients", tags=["clients"])
 
 
 class ClientCreate(BaseModel):
+    user_id: int
     name: str
     entreprise: str
     email: str
@@ -79,7 +80,8 @@ class ClientUpdate(BaseModel):
 
 
 class ClientResponse(BaseModel):
-    ClientId: int
+    Client_Id: int
+    User_Id: int
     Client_Name: str
     Client_Entreprise: str
     Client_Email: str
@@ -104,6 +106,7 @@ def obtenir_client(client_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
 def creer_client(data: ClientCreate, db: Session = Depends(get_db)):
     client = Client(
+        User_Id=data.user_id,
         Client_Name=data.name,
         Client_Entreprise=data.entreprise,
         Client_Email=data.email,
