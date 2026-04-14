@@ -11,6 +11,7 @@ router = APIRouter(prefix="/services", tags=["services"])
 
 
 class ServiceCreate(BaseModel):
+    user_id: int
     nom: str
     prix_heure: Decimal
 
@@ -49,10 +50,11 @@ class ServiceUpdate(BaseModel):
 
 
 class ServiceResponse(BaseModel):
-    service_id: int
-    service_nom: str
-    service_prixHeure: Decimal
-    service_description: str | None
+    Service_Id: int
+    User_Id: int
+    Service_Name: str
+    Service_PriceHour: Decimal
+    Service_Description: str | None
 
     model_config = {"from_attributes": True}
 
@@ -72,7 +74,9 @@ def obtenir_service(service_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ServiceResponse, status_code=status.HTTP_201_CREATED)
 def creer_service(data: ServiceCreate, db: Session = Depends(get_db)):
-    service = Service(service_nom=data.nom, service_prixHeure=data.prix_heure)
+    service = Service(
+        Service_Name=data.nom, Service_PriceHour=data.prix_heure, User_Id=data.user_id
+    )
     db.add(service)
     db.commit()
     db.refresh(service)
@@ -87,9 +91,9 @@ def modifier_service(
     if not service:
         raise HTTPException(status_code=404, detail="Service introuvable")
     if data.nom is not None:
-        service.service_nom = data.nom
+        service.Service_Name = data.nom
     if data.prix_heure is not None:
-        service.service_prixHeure = data.prix_heure
+        service.Service_PriceHour = data.prix_heure
     db.commit()
     db.refresh(service)
     return service

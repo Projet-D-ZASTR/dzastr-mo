@@ -17,12 +17,12 @@ class InvoiceState(StrEnum):
 class Invoice(Base):
     __tablename__ = "invoices"
 
-    invoice_id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, nullable=False)
-    client_id = Column(Integer, nullable=False)
-    invoice_price = Column(Numeric(10, 2), nullable=False, default=0.00)
-    invoice_date = Column(Date, nullable=False)
-    invoice_state = Column(
+    Facture_Id = Column(Integer, primary_key=True, autoincrement=True)
+    User_Id = Column(Integer, nullable=False)
+    Client_Id = Column(Integer, nullable=False)
+    Facture_Prix = Column(Numeric(10, 2), nullable=False, default=0.00)
+    Facture_Date = Column(Date, nullable=False)
+    Facture_State = Column(
         SAEnum(InvoiceState), nullable=False, default=InvoiceState.draft
     )
 
@@ -35,7 +35,7 @@ class InvoiceItem(Base):
     __tablename__ = "invoice_items"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    invoice_id = Column(Integer, ForeignKey("invoices.invoice_id"), nullable=False)
-    item_id = Column(Integer, nullable=False)
+    Facture_Id = Column(Integer, ForeignKey("invoices.Facture_Id"), nullable=False)
+    Nombre_Id = Column(Integer, nullable=False)
 
     invoice = relationship("Invoice", back_populates="items")

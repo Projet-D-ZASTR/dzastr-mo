@@ -12,27 +12,27 @@ class InvoiceState(StrEnum):
 
 
 class InvoiceCreate(BaseModel):
-    user_id: int
-    client_id: int
-    invoice_price: float
-    invoice_date: date
+    User_Id: int
+    Client_Id: int
+    Facture_Prix: float
+    Facture_Date: date
     item_ids: list[int]
 
 
 class InvoiceUpdate(BaseModel):
-    invoice_price: float | None = None
-    invoice_date: date | None = None
-    invoice_state: InvoiceState | None = None
+    Facture_Prix: float | None = None
+    Facture_Date: date | None = None
+    Facture_State: InvoiceState | None = None
     item_ids: list[int] | None = None
 
 
 class InvoiceRead(BaseModel):
-    invoice_id: int
-    user_id: int
-    client_id: int
-    invoice_price: float
-    invoice_date: date
-    invoice_state: InvoiceState
+    Facture_Id: int
+    User_Id: int
+    Client_Id: int
+    Facture_Prix: float
+    Facture_Date: date
+    Facture_State: InvoiceState
     item_ids: list[int]
 
     model_config = {"from_attributes": True}
@@ -42,12 +42,12 @@ class InvoiceRead(BaseModel):
     def extract_item_ids(cls, data):
         if hasattr(data, "items"):
             return {
-                "invoice_id": data.invoice_id,
-                "user_id": data.user_id,
-                "client_id": data.client_id,
-                "invoice_price": float(data.invoice_price),
-                "invoice_date": data.invoice_date,
-                "invoice_state": data.invoice_state,
-                "item_ids": [item.item_id for item in data.items],
+                "Facture_Id": data.Facture_Id,
+                "User_Id": data.User_Id,
+                "Client_Id": data.Client_Id,
+                "Facture_Prix": float(data.Facture_Prix),
+                "Facture_Date": data.Facture_Date,
+                "Facture_State": data.Facture_State,
+                "item_ids": [item.Nombre_Id for item in data.items],
             }
         return data

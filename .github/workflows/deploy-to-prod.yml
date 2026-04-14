@@ -1,0 +1,92 @@
+name: Deploy to Production
+
+on:
+  pull_request:
+    branches:
+      - production
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-to-prod-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-mo-lint:
+    name: Verify Ruff (mo)
+    if: github.head_ref == 'develop'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/ruff-action@v3
+        with:
+          args: "check ."
+
+      - uses: astral-sh/ruff-action@v3
+        with:
+          args: "format --check ."
+
+  verify-mo-tests:
+    name: Verify tests (mo)
+    if: github.head_ref == 'develop'
+    runs-on: ubuntu-latest
+    needs: verify-mo-lint
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest ruff
+
+      - name: Run tests
+        run: pytest test/
+        env:
+          DATABASE_URL: "sqlite:///:memory:"
+          AUTH_SERVICE_TOKEN: ci-test-token
+          SERVICE_TOKEN: ci-test-token
+
+  deploy-to-production:
+    name: Merge develop -> production (mo)
+    if: github.head_ref == 'develop' && needs.verify-mo-lint.result == 'success' && needs.verify-mo-tests.result == 'success'
+    runs-on: ubuntu-latest
+    needs:
+      - verify-mo-lint
+      - verify-mo-tests
+    env:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    steps:
+      - name: Validate PAT_TOKEN secret
+        if: ${{ env.PAT_TOKEN == '' }}
+        run: |
+          echo "PAT_TOKEN est manquant. Ajoute-le dans Settings > Secrets and variables > Actions."
+          exit 1
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ github.token }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge develop into production
+        run: |
+          git fetch origin
+          git checkout production
+          git merge --no-ff origin/develop -m "chore: merge develop -> production [auto]"
+          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}
+          git push origin production
