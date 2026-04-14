@@ -1,6 +1,7 @@
 import smtplib
 from email.message import EmailMessage
 
+
 def send_email(
     smtp_server: str,
     smtp_port: int,
