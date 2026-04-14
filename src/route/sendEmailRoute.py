@@ -1,6 +1,8 @@
-from fastapi import APIRouter, File, Form, UploadFile, status
-import src.services.emailService as email_service
 from os import getenv
+
+from fastapi import APIRouter, File, Form, UploadFile, status
+
+import src.services.emailService as email_service
 
 router = APIRouter(prefix="/send-email", tags=["email"])
 
