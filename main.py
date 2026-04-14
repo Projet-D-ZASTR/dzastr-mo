@@ -13,6 +13,7 @@ from src.models import Invoice, InvoiceItem, UserStub  # noqa: E402, F401 — ne
 from src.models.base import Base  # noqa: E402
 from src.route import client, serviceFacture, services  # noqa: E402
 from src.route.invoices_route import router as invoices_router  # noqa: E402
+from src.route.sendEmailRoute import router as sendEmailRoute  # noqa: E402
 import sentry_sdk
 from os import getenv
 
@@ -47,3 +48,4 @@ app.include_router(invoices_router)
 app.include_router(services.router)
 app.include_router(client.router)
 app.include_router(serviceFacture.router)
+app.include_router(sendEmailRoute)
