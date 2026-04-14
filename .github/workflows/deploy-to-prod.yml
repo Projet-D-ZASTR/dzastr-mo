@@ -64,11 +64,17 @@ jobs:
       - verify-mo-tests
 
     steps:
+      - name: Validate PAT_TOKEN secret
+        if: ${{ secrets.PAT_TOKEN == '' }}
+        run: |
+          echo "PAT_TOKEN est manquant. Ajoute-le dans Settings > Secrets and variables > Actions."
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ github.token }}
 
       - name: Configure Git
         run: |
