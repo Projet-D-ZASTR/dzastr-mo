@@ -9,7 +9,7 @@ from fastapi import Depends, FastAPI  # noqa: E402
 from config import engine  # noqa: E402
 from src.middlewares.accessToken import verify_user  # noqa: E402
 from src.middlewares.servicetoken import verify_service_token  # noqa: E402
-from src.models import Invoice, InvoiceItem  # noqa: E402, F401 — needed for metadata
+from src.models import Invoice, InvoiceItem, UserStub  # noqa: E402, F401 — needed for metadata
 from src.models.base import Base  # noqa: E402
 from src.route import client, serviceFacture, services  # noqa: E402
 from src.route.invoices_route import router as invoices_router  # noqa: E402
