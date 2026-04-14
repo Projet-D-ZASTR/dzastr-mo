@@ -24,7 +24,6 @@ import random
 
 from locust import HttpUser, between, task
 
-
 SERVICE_TOKEN = os.getenv("SERVICE_TOKEN", "test-token")
 BEARER_TOKEN = os.getenv("BEARER_TOKEN", "test-token")
 TARGET_USER_ID = int(os.getenv("TARGET_USER_ID", "1"))
