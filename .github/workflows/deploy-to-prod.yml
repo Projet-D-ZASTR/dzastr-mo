@@ -82,4 +82,3 @@ jobs:
           git merge --no-ff origin/develop -m "chore: merge develop -> production [auto]"
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}
           git push origin production
-
