@@ -8,9 +8,11 @@ from fastapi import Depends, FastAPI
 from config import engine
 from src.middlewares.accessToken import verify_user
 from src.middlewares.servicetoken import verify_service_token
+from src.models import Logo, UserStub  # noqa: F401 — needed for metadata
 from src.models.base import Base
 from src.route import client, serviceFacture, services
 from src.route.invoices_route import router as invoices_router
+from src.route.logo import router as logo_router
 from src.route.sendEmailRoute import router as sendEmailRoute
 
 load_dotenv()
@@ -39,3 +41,4 @@ app.include_router(services.router)
 app.include_router(client.router)
 app.include_router(serviceFacture.router)
 app.include_router(sendEmailRoute)
+app.include_router(logo_router)
