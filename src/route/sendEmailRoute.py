@@ -1,5 +1,4 @@
 from fastapi import APIRouter, File, Form, UploadFile, status
-from typing import List
 import src.services.emailService as email_service
 from os import getenv
 
@@ -7,9 +6,9 @@ router = APIRouter(prefix="/send-email", tags=["email"])
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def send_email_route(
-    to: List[str] = Form(...),
-    cc: List[str] = Form([]),
-    bcc: List[str] = Form([]),
+    to: list[str] = Form(...),
+    cc: list[str] = Form([]),
+    bcc: list[str] = Form([]),
     subject: str = Form(...),
     message: str = Form(...),
     pdf: UploadFile = File(...),

@@ -3,25 +3,18 @@ from os import getenv
 
 import sentry_sdk
 from dotenv import load_dotenv
+from fastapi import Depends, FastAPI
+
+from config import engine
+from src.middlewares.accessToken import verify_user
+from src.middlewares.servicetoken import verify_service_token
+from src.models import Invoice, InvoiceItem, UserStub
+from src.models.base import Base
+from src.route import client, serviceFacture, services
+from src.route.invoices_route import router as invoices_router
+from src.route.sendEmailRoute import router as sendEmailRoute
 
 load_dotenv()
-
-from fastapi import Depends, FastAPI  # noqa: E402
-
-from config import engine  # noqa: E402
-from src.middlewares.accessToken import verify_user  # noqa: E402
-from src.middlewares.servicetoken import verify_service_token  # noqa: E402
-from src.models import (  # noqa: E402, F401 — needed for metadata
-    Invoice,
-    InvoiceItem,
-    UserStub,
-)
-from src.models.base import Base  # noqa: E402
-from src.route import client, serviceFacture, services  # noqa: E402
-from src.route.invoices_route import router as invoices_router  # noqa: E402
-from src.route.sendEmailRoute import router as sendEmailRoute  # noqa: E402
-import sentry_sdk
-from os import getenv
 
 sentry_sdk.init(
     dsn=getenv("SENTRY_DSN"),
