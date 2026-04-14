@@ -1,7 +1,12 @@
+import csv
+import io
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from config import get_db
+from src.middlewares.accessToken import verify_user
 from src.models.invoices import Invoice, InvoiceItem
 from src.schemas.invoices import InvoiceCreate, InvoiceRead, InvoiceUpdate
 
@@ -25,6 +30,35 @@ def create_invoice(payload: InvoiceCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(invoice)
     return invoice
+
+
+@router.get("/export/csv", response_class=StreamingResponse)
+async def exporter_factures_csv(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(verify_user),
+):
+    user_id = current_user["User_Id"]
+    factures = db.query(Invoice).filter(Invoice.User_Id == user_id).all()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Facture_Id", "User_Id", "Client_Id", "Prix", "Date", "Statut"])
+    for f in factures:
+        writer.writerow(
+            [
+                f.Facture_Id,
+                f.User_Id,
+                f.Client_Id,
+                f.Facture_Prix,
+                f.Facture_Date,
+                f.Facture_State,
+            ]
+        )
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=factures.csv"},
+    )
 
 
 @router.get("/", response_model=list[InvoiceRead])

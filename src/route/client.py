@@ -1,8 +1,13 @@
+import csv
+import io
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session
 
 from config import get_db
+from src.middlewares.accessToken import verify_user
 from src.models.client import Client
 
 router = APIRouter(prefix="/clients", tags=["clients"])
@@ -88,6 +93,35 @@ class ClientResponse(BaseModel):
     Client_Address: str
 
     model_config = {"from_attributes": True}
+
+
+@router.get("/export/csv", response_class=StreamingResponse)
+async def exporter_clients_csv(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(verify_user),
+):
+    user_id = current_user["User_Id"]
+    clients = db.query(Client).filter(Client.User_Id == user_id).all()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Client_Id", "User_Id", "Nom", "Entreprise", "Email", "Adresse"])
+    for c in clients:
+        writer.writerow(
+            [
+                c.Client_Id,
+                c.User_Id,
+                c.Client_Name,
+                c.Client_Entreprise,
+                c.Client_Email,
+                c.Client_Address,
+            ]
+        )
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=clients.csv"},
+    )
 
 
 @router.get("/", response_model=list[ClientResponse])
