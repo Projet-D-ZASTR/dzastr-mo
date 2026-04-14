@@ -11,6 +11,7 @@ router = APIRouter(prefix="/services", tags=["services"])
 
 
 class ServiceCreate(BaseModel):
+    user_id: int
     nom: str
     prix_heure: Decimal
 
@@ -50,6 +51,7 @@ class ServiceUpdate(BaseModel):
 
 class ServiceResponse(BaseModel):
     Service_Id: int
+    User_Id: int
     Service_Name: str
     Service_PriceHour: Decimal
     Service_Description: str | None
@@ -72,7 +74,9 @@ def obtenir_service(service_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ServiceResponse, status_code=status.HTTP_201_CREATED)
 def creer_service(data: ServiceCreate, db: Session = Depends(get_db)):
-    service = Service(Service_Name=data.nom, Service_PriceHour=data.prix_heure)
+    service = Service(
+        Service_Name=data.nom, Service_PriceHour=data.prix_heure, User_Id=data.user_id
+    )
     db.add(service)
     db.commit()
     db.refresh(service)

@@ -6,6 +6,7 @@ import src.services.emailService as email_service
 
 router = APIRouter(prefix="/send-email", tags=["email"])
 
+
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def send_email_route(
     to: list[str] = Form(...),
