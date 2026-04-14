@@ -7,7 +7,7 @@ os.environ.setdefault("AUTH_SERVICE_TOKEN", "test-token")
 os.environ.setdefault("SERVICE_TOKEN", "test-token")
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
-from sqlalchemy import Column, Integer, String, create_engine  # noqa: E402
+from sqlalchemy import create_engine  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
@@ -19,16 +19,7 @@ from src.models.base import Base  # noqa: E402
 from src.models.client import Client  # noqa: E402, F401
 from src.models.invoices import Invoice, InvoiceItem  # noqa: E402, F401
 from src.models.services import Service  # noqa: E402, F401
-
-
-# Stub de la table users (appartient à dzastr-auth) — nécessaire pour résoudre la FK User_Id
-class UserStub(Base):
-    __tablename__ = "users"
-
-    User_Id = Column(Integer, primary_key=True, autoincrement=True)
-    User_Username = Column(String(80), nullable=False)
-    User_Email = Column(String(80), nullable=False)
-
+from src.models.user_stub import UserStub  # noqa: E402, F401
 
 engine = create_engine(
     "sqlite:///:memory:",
