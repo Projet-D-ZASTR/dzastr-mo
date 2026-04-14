@@ -17,3 +17,4 @@ typing_extensions==4.15.0
 uvicorn==0.42.0
 pytest==8.3.5
 httpx==0.28.1
+sentry_sdk==1.31.0
