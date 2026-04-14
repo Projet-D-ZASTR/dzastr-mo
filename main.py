@@ -1,5 +1,7 @@
 from contextlib import asynccontextmanager
+from os import getenv
 
+import sentry_sdk
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,17 +19,11 @@ from src.models import (  # noqa: E402, F401 — needed for metadata
 from src.models.base import Base  # noqa: E402
 from src.route import client, serviceFacture, services  # noqa: E402
 from src.route.invoices_route import router as invoices_router  # noqa: E402
-import sentry_sdk
-from os import getenv
 
 sentry_sdk.init(
     dsn=getenv("SENTRY_DSN"),
-    # Add request headers and IP for users,
-    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for tracing.
-    traces_sample_rate=1.0
+    traces_sample_rate=1.0,
 )
 
 
@@ -42,10 +38,6 @@ app = FastAPI(
     lifespan=lifespan,
     dependencies=[Depends(verify_service_token), Depends(verify_user)],
 )
-
-@app.get("/sentry-debug")
-async def trigger_error():
-    division_by_zero = 1 / 0
 
 app.include_router(invoices_router)
 app.include_router(services.router)
