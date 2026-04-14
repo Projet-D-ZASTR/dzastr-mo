@@ -15,14 +15,14 @@ class ServiceCreate(BaseModel):
     Name: str
     PriceHour: Decimal
 
-    @field_validator("nom")
+    @field_validator("Name")
     @classmethod
     def nom_non_vide(cls, v):
         if not v.strip():
             raise ValueError("Le label ne peut pas être vide")
         return v.strip()
 
-    @field_validator("prix_heure")
+    @field_validator("PriceHour")
     @classmethod
     def prix_positif(cls, v):
         if v <= 0:
