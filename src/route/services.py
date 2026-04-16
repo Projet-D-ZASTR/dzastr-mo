@@ -1,4 +1,3 @@
-from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, field_validator
@@ -13,7 +12,7 @@ router = APIRouter(prefix="/services", tags=["services"])
 class ServiceCreate(BaseModel):
     Service_UserId: int
     Service_Name: str
-    Service_PriceHour: Decimal
+    Service_PriceHour: float
 
     @field_validator("Service_Name")
     @classmethod
@@ -32,7 +31,7 @@ class ServiceCreate(BaseModel):
 
 class ServiceUpdate(BaseModel):
     Service_Name: str | None = None
-    Service_PriceHour: Decimal | None = None
+    Service_PriceHour: float | None = None
 
     @field_validator("Service_Name")
     @classmethod
@@ -53,7 +52,7 @@ class ServiceResponse(BaseModel):
     Service_Id: int
     Service_UserId: int
     Service_Name: str
-    Service_PriceHour: Decimal
+    Service_PriceHour: float
 
     model_config = {"from_attributes": True}
 
@@ -86,7 +85,7 @@ def creer_service(data: ServiceCreate, db: Session = Depends(get_db)):
 
 @router.put("/{service_id}", response_model=ServiceResponse)
 def modifier_service(
-    service_id: int, data: ServiceUpdate, db: Session = Depends(get_db)
+        service_id: int, data: ServiceUpdate, db: Session = Depends(get_db)
 ):
     service = db.get(Service, service_id)
     if not service:
@@ -102,7 +101,7 @@ def modifier_service(
 
 @router.delete("/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
 def supprimer_service(
-    service_id: int, confirme: bool = False, db: Session = Depends(get_db)
+        service_id: int, confirme: bool = False, db: Session = Depends(get_db)
 ):
     if not confirme:
         raise HTTPException(
