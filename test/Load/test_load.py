@@ -103,6 +103,7 @@ class DzastrUser(HttpUser):
     @task(2)
     def create_and_delete_service(self):
         payload = {
+            "user_id": TARGET_USER_ID,
             "nom": f"Service {random.randint(1, 9999)}",
             "prix_heure": round(random.uniform(10, 500), 2),
         }
