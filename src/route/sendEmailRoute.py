@@ -1,5 +1,3 @@
-from os import getenv
-
 from fastapi import APIRouter, File, Form, UploadFile, status
 
 import src.services.emailService as email_service
@@ -19,10 +17,6 @@ async def send_email_route(
     pdf_bytes = await pdf.read()
 
     email_service.send_email(
-        smtp_server=getenv("SMTP_SERVER"),
-        smtp_port=getenv("SMTP_PORT"),
-        username=getenv("SMTP_USERNAME"),
-        password=getenv("SMTP_PASSWORD"),
         to=to,
         cc=cc,
         bcc=bcc,
