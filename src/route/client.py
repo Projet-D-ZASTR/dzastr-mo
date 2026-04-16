@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from config import get_db
 from src.middlewares.accessToken import verify_user
 from src.models.client import Client
+from src.models.user_stub import UserStub
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
@@ -101,16 +102,20 @@ async def exporter_clients_csv(
     current_user: dict = Depends(verify_user),
 ):
     user_id = current_user["User_Id"]
-    clients = db.query(Client).filter(Client.User_Id == user_id).all()
+    rows = (
+        db.query(Client, UserStub.User_Username)
+        .join(UserStub, Client.User_Id == UserStub.User_Id)
+        .filter(Client.User_Id == user_id)
+        .all()
+    )
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Client_Id", "User_Id", "Nom", "Entreprise", "Email", "Adresse"])
-    for c in clients:
+    writer.writerow(["Nom_Client", "Nom_Utilisateur", "Entreprise", "Email", "Adresse"])
+    for c, username in rows:
         writer.writerow(
             [
-                c.Client_Id,
-                c.User_Id,
                 c.Client_Name,
+                username,
                 c.Client_Entreprise,
                 c.Client_Email,
                 c.Client_Address,

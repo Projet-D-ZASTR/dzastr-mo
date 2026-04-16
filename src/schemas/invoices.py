@@ -20,6 +20,7 @@ class InvoiceCreate(BaseModel):
 
 
 class InvoiceUpdate(BaseModel):
+    Client_Id: int | None = None
     Facture_Prix: float | None = None
     Facture_Date: date | None = None
     Facture_State: InvoiceState | None = None

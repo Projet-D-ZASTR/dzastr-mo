@@ -7,7 +7,9 @@ from sqlalchemy.orm import Session
 
 from config import get_db
 from src.middlewares.accessToken import verify_user
+from src.models.client import Client
 from src.models.invoices import Invoice, InvoiceItem
+from src.models.user_stub import UserStub
 from src.schemas.invoices import InvoiceCreate, InvoiceRead, InvoiceUpdate
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
@@ -38,16 +40,24 @@ async def exporter_factures_csv(
     current_user: dict = Depends(verify_user),
 ):
     user_id = current_user["User_Id"]
-    factures = db.query(Invoice).filter(Invoice.User_Id == user_id).all()
+    rows = (
+        db.query(Invoice, UserStub.User_Username, Client.Client_Name)
+        .join(UserStub, Invoice.User_Id == UserStub.User_Id)
+        .outerjoin(Client, Invoice.Client_Id == Client.Client_Id)
+        .filter(Invoice.User_Id == user_id)
+        .all()
+    )
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Facture_Id", "User_Id", "Client_Id", "Prix", "Date", "Statut"])
-    for f in factures:
+    writer.writerow(
+        ["Facture_Id", "Nom_Utilisateur", "Nom_Client", "Prix", "Date", "Statut"]
+    )
+    for f, username, client_name in rows:
         writer.writerow(
             [
                 f.Facture_Id,
-                f.User_Id,
-                f.Client_Id,
+                username,
+                client_name,
                 f.Facture_Prix,
                 f.Facture_Date,
                 f.Facture_State,
@@ -89,6 +99,8 @@ def update_invoice(
             status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found"
         )
 
+    if payload.Client_Id is not None:
+        invoice.Client_Id = payload.Client_Id
     if payload.Facture_Prix is not None:
         invoice.Facture_Prix = payload.Facture_Prix
     if payload.Facture_Date is not None:
