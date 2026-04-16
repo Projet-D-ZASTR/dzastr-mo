@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session
@@ -85,7 +84,7 @@ def creer_service(data: ServiceCreate, db: Session = Depends(get_db)):
 
 @router.put("/{service_id}", response_model=ServiceResponse)
 def modifier_service(
-        service_id: int, data: ServiceUpdate, db: Session = Depends(get_db)
+    service_id: int, data: ServiceUpdate, db: Session = Depends(get_db)
 ):
     service = db.get(Service, service_id)
     if not service:
@@ -101,7 +100,7 @@ def modifier_service(
 
 @router.delete("/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
 def supprimer_service(
-        service_id: int, confirme: bool = False, db: Session = Depends(get_db)
+    service_id: int, confirme: bool = False, db: Session = Depends(get_db)
 ):
     if not confirme:
         raise HTTPException(
