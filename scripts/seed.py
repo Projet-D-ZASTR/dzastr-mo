@@ -91,7 +91,11 @@ def seed():
             db.flush()
 
             for _ in range(random.randint(0, 3)):
-                db.add(InvoiceItem(Facture_Id=invoice.Facture_Id, Nombre_Id=random.randint(1, 10)))
+                db.add(
+                    InvoiceItem(
+                        Facture_Id=invoice.Facture_Id, Nombre_Id=random.randint(1, 10)
+                    )
+                )
 
         db.commit()
         print(f"✓ {N_INVOICES} factures créées")
