@@ -1,12 +1,9 @@
 import smtplib
 from email.message import EmailMessage
+from os import getenv
 
 
 def send_email(
-    smtp_server: str,
-    smtp_port: int,
-    username: str,
-    password: str,
     to: list[str],
     cc: list[str],
     bcc: list[str],
@@ -17,7 +14,7 @@ def send_email(
 ):
     msg = EmailMessage()
     msg["Subject"] = subject
-    msg["From"] = username
+    msg["From"] = getenv("SMTP_EMAIL_FROM")
     msg["To"] = ", ".join(to)
 
     if cc:
@@ -36,7 +33,7 @@ def send_email(
         filename=pdf_filename,
     )
 
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
+    with smtplib.SMTP(getenv("SMTP_SERVER"), int(getenv("SMTP_PORT"))) as server:
         server.starttls()
-        server.login(username, password)
+        server.login(getenv("SMTP_USERNAME"), getenv("SMTP_PASSWORD"))
         server.send_message(msg, to_addrs=all_recipients)

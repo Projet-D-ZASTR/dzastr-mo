@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session
@@ -13,7 +11,7 @@ router = APIRouter(prefix="/services", tags=["services"])
 class ServiceCreate(BaseModel):
     Service_UserId: int
     Service_Name: str
-    Service_PriceHour: Decimal
+    Service_PriceHour: float
 
     @field_validator("Service_Name")
     @classmethod
@@ -32,7 +30,7 @@ class ServiceCreate(BaseModel):
 
 class ServiceUpdate(BaseModel):
     Service_Name: str | None = None
-    Service_PriceHour: Decimal | None = None
+    Service_PriceHour: float | None = None
 
     @field_validator("Service_Name")
     @classmethod
@@ -53,7 +51,7 @@ class ServiceResponse(BaseModel):
     Service_Id: int
     Service_UserId: int
     Service_Name: str
-    Service_PriceHour: Decimal
+    Service_PriceHour: float
 
     model_config = {"from_attributes": True}
 
