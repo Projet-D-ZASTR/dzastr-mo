@@ -1,6 +1,6 @@
-from os import getenv
 import smtplib
 from email.message import EmailMessage
+from os import getenv
 
 
 def send_email(
