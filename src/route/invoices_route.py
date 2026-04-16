@@ -43,7 +43,7 @@ async def exporter_factures_csv(
     rows = (
         db.query(Invoice, UserStub.User_Username, Client.Client_Name)
         .join(UserStub, Invoice.User_Id == UserStub.User_Id)
-        .join(Client, Invoice.Client_Id == Client.Client_Id)
+        .outerjoin(Client, Invoice.Client_Id == Client.Client_Id)
         .filter(Invoice.User_Id == user_id)
         .all()
     )
@@ -99,6 +99,8 @@ def update_invoice(
             status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found"
         )
 
+    if payload.Client_Id is not None:
+        invoice.Client_Id = payload.Client_Id
     if payload.Facture_Prix is not None:
         invoice.Facture_Prix = payload.Facture_Prix
     if payload.Facture_Date is not None:
