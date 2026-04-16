@@ -11,18 +11,18 @@ router = APIRouter(prefix="/services", tags=["services"])
 
 
 class ServiceCreate(BaseModel):
-    user_id: int
-    nom: str
-    prix_heure: Decimal
+    Service_UserId: int
+    Service_Name: str
+    Service_PriceHour: Decimal
 
-    @field_validator("nom")
+    @field_validator("Service_Name")
     @classmethod
     def nom_non_vide(cls, v):
         if not v.strip():
             raise ValueError("Le label ne peut pas être vide")
         return v.strip()
 
-    @field_validator("prix_heure")
+    @field_validator("Service_PriceHour")
     @classmethod
     def prix_positif(cls, v):
         if v <= 0:
@@ -31,17 +31,17 @@ class ServiceCreate(BaseModel):
 
 
 class ServiceUpdate(BaseModel):
-    nom: str | None = None
-    prix_heure: Decimal | None = None
+    Service_Name: str | None = None
+    Service_PriceHour: Decimal | None = None
 
-    @field_validator("nom")
+    @field_validator("Service_Name")
     @classmethod
     def nom_non_vide(cls, v):
         if v is not None and not v.strip():
             raise ValueError("Le label ne peut pas être vide")
         return v.strip() if v else v
 
-    @field_validator("prix_heure")
+    @field_validator("Service_PriceHour")
     @classmethod
     def prix_positif(cls, v):
         if v is not None and v <= 0:
@@ -51,10 +51,9 @@ class ServiceUpdate(BaseModel):
 
 class ServiceResponse(BaseModel):
     Service_Id: int
-    User_Id: int
+    Service_UserId: int
     Service_Name: str
     Service_PriceHour: Decimal
-    Service_Description: str | None
 
     model_config = {"from_attributes": True}
 
@@ -75,7 +74,9 @@ def obtenir_service(service_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=ServiceResponse, status_code=status.HTTP_201_CREATED)
 def creer_service(data: ServiceCreate, db: Session = Depends(get_db)):
     service = Service(
-        Service_Name=data.nom, Service_PriceHour=data.prix_heure, User_Id=data.user_id
+        Service_Name=data.Service_Name,
+        Service_PriceHour=data.Service_PriceHour,
+        Service_UserId=data.Service_UserId,
     )
     db.add(service)
     db.commit()
@@ -90,10 +91,10 @@ def modifier_service(
     service = db.get(Service, service_id)
     if not service:
         raise HTTPException(status_code=404, detail="Service introuvable")
-    if data.nom is not None:
-        service.Service_Name = data.nom
-    if data.prix_heure is not None:
-        service.Service_PriceHour = data.prix_heure
+    if data.Service_Name is not None:
+        service.Service_Name = data.Service_Name
+    if data.Service_PriceHour is not None:
+        service.Service_PriceHour = data.Service_PriceHour
     db.commit()
     db.refresh(service)
     return service
